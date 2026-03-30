@@ -1,8 +1,12 @@
 const Tesseract = require('tesseract.js');
+const os = require('os');
 
 async function extractMileage(imagePath) {
   try {
-    const worker = await Tesseract.createWorker('eng');
+    const worker = await Tesseract.createWorker('eng', 1, {
+      cachePath: os.tmpdir(),
+      cacheMethod: 'write'
+    });
     await worker.setParameters({
       tessedit_char_whitelist: '0123456789',
     });

@@ -10,6 +10,22 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Serverless DB Connection Middleware
+const mongoose = require('mongoose');
+app.use(async (req, res, next) => {
+  if (mongoose.connection.readyState !== 1) {
+    try {
+      if(process.env.MONGODB_URI) {
+        await mongoose.connect(process.env.MONGODB_URI);
+      }
+    } catch (e) {
+      console.error('Atlas connection error:', e);
+      return res.status(500).json({ error: 'Database connection failed' });
+    }
+  }
+  next();
+});
+
 // Serve static React frontend in production
 app.use(express.static(path.join(__dirname, '../frontend/dist')));
 

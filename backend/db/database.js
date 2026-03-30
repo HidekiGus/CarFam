@@ -1,12 +1,6 @@
 const mongoose = require('mongoose');
 require('dotenv').config();
 
-const uri = process.env.MONGODB_URI;
-
-mongoose.connect(uri)
-  .then(() => console.log('Connected to MongoDB Atlas'))
-  .catch((err) => console.error('Error connecting to MongoDB Atlas:', err));
-
 const userSchema = new mongoose.Schema({
   name: { type: String, unique: true, required: true }
 });
@@ -50,6 +44,7 @@ const initUsers = async () => {
   }
 };
 
-mongoose.connection.once('open', initUsers);
+// Serverless environments shouldn't bind initUsers to connection.once locally.
+// We will let the init function run manually or export it.
 
-module.exports = { User, Trip, Refill, mongoose };
+module.exports = { User, Trip, Refill, mongoose, initUsers };
