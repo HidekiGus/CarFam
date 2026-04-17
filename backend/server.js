@@ -15,7 +15,7 @@ const mongoose = require('mongoose');
 app.use(async (req, res, next) => {
   if (mongoose.connection.readyState !== 1) {
     try {
-      if(process.env.MONGODB_URI) {
+      if (process.env.MONGODB_URI) {
         await mongoose.connect(process.env.MONGODB_URI);
       }
     } catch (e) {
@@ -47,7 +47,7 @@ app.get('/api/users', async (req, res) => {
 
 app.post('/api/ocr', upload.single('image'), async (req, res) => {
   if (!req.file) return res.status(400).json({ error: 'No image uploaded' });
-  
+
   const extractedKm = await extractMileage(req.file.path);
   res.json({ km: extractedKm, imagePath: req.file.path });
 });
@@ -55,7 +55,7 @@ app.post('/api/ocr', upload.single('image'), async (req, res) => {
 app.post('/api/trips', async (req, res) => {
   const { userId, startKm, endKm } = req.body;
   if (!userId || !startKm || !endKm) return res.status(400).json({ error: 'Missing fields' });
-  
+
   const distance = endKm - startKm;
   if (distance < 0) return res.status(400).json({ error: 'End KM must be greater than Start KM' });
 
@@ -70,9 +70,9 @@ app.post('/api/trips', async (req, res) => {
 app.post('/api/refills', async (req, res) => {
   const { userId, amountReais, pricePerLiter, fuelType } = req.body;
   if (!userId || !amountReais || !pricePerLiter || !fuelType) return res.status(400).json({ error: 'Missing fields' });
-  
-  const CONSUMPTION_GASOLINE = 6.0; 
-  const CONSUMPTION_ALCOHOL = 4.0;
+
+  const CONSUMPTION_GASOLINE = 6.0;
+  const CONSUMPTION_ALCOHOL = 5.0;
 
   const consumption = fuelType === 'Gasoline' ? CONSUMPTION_GASOLINE : CONSUMPTION_ALCOHOL;
   const liters = amountReais / pricePerLiter;
@@ -93,7 +93,7 @@ app.get('/api/dashboard', async (req, res) => {
 
   try {
     const users = await User.find();
-    
+
     // Aggregate over each user
     const stats = await Promise.all(users.map(async (user) => {
       const tripsAggr = await Trip.aggregate([
@@ -118,7 +118,7 @@ app.get('/api/dashboard', async (req, res) => {
         balance_km: total_km_paid - total_km_driven
       };
     }));
-    
+
     res.json(stats);
   } catch (err) {
     res.status(500).json({ error: err.message });
