@@ -49,7 +49,7 @@ const RefillForm = ({ user }) => {
               className={`flex-1 py-2 text-sm font-medium rounded-md transition-all ${fuelType === 'Alcohol' ? 'bg-white shadow-sm text-gray-900 border border-gray-200' : 'text-gray-500 hover:text-gray-700'}`}
               onClick={() => setFuelType('Alcohol')}
             >
-              Etanol (4,0 km/L)
+              Etanol (5,0 km/L)
             </button>
           </div>
         </div>
